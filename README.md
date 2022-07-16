@@ -1451,3 +1451,4 @@ public class RedisUtil {
 
 ### 使用时,仅需要注入RedisUtil类,直接点方法即可
 
+# wiki

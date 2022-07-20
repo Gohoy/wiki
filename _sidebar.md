@@ -13,3 +13,9 @@
 * ### [Thymeleaf](Thymeleaf.md)
 
 * ### [SPEL表达式*](SPEL表达式.md)
+
+* ### [Maven bug记录](Maven 构建bug记录.md)
+
+* ### [前端npm安装依赖问题记录](npmBUG.md)
+
+* ### [JWT](JWT.md)

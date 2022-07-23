@@ -199,6 +199,51 @@ redis-benchmark -h localhost -p 6379 -c 100 -n 100000
   * 放弃事务(discard) 
 * 如果命令出错,事务中所有命令都会失败；如果是运行时运行,那么这个异常的命令会失败,其他命令正常执行
 
-* **监控** (**watch** 乐观锁): 
-  * 悲观锁: 很悲观,无论做什么都加锁
-  * 乐观锁:很乐观,所以不会上锁,更新数据的时候判断在此期间是否有人修改过这个数据,如果修改过则下列操作失败,如果发现事务出错,先解锁(unwatch)再获取最新值加锁(watch)
+
+
+> ### 监控 (**watch** 乐观锁): 
+
+* 悲观锁: 很悲观,无论做什么都加锁
+* 乐观锁:很乐观,所以不会上锁,更新数据的时候判断在此期间是否有人修改过这个数据,如果修改过则下列操作失败,如果发现事务出错,先解锁(unwatch)再获取最新值加锁(watch)
+
+> ### [Jedis](Jedis.md):	使用java操作redis的中间件
+
+> ### [Springboot整合redis](springboot-redis.md)
+
+> ### 持久化rdb(快照  )
+
+* 保存的文件是 dump.rdb
+
+* 在配置文件`redis.conf`中快照中配置  
+
+  ```bash 
+  # 在60秒内修改5次就把数据持久化
+  save 60 5  
+  ```
+
+* 触发rdb规则
+  * 达到设置规则 save 60 5
+  * 进行`flushall`
+  * 推出redis
+* 将 dump.rdb放到redis根目录,redis就可以获取到其中的数据
+
+> ### 持久化 aof(append only file)
+
+* 保存的文件时 appendonly.aof
+* 就是把命令都记录下来,然后将它们全部执行一遍
+* 默认不开启,需要在配置文件中将 appendonly no 改为 `appendonly yes`重启
+* 如果aof文件有问题,redis无法开启,使用`redis-check-aof --fix appendonly.aof`修复aof文件
+
+> ### Redis 发布订阅
+
+* 订阅端`subscribe channel`订阅channel1 
+
+* 发送端`publish channel1 "hello"`向channel1 发送一条信息'hello',此时订阅者可以收到这个消息
+* `unsubscribe channel1`退订
+* 应用场景:
+  * 实时聊天
+  * 订阅
+* 使用mq实现复杂场景
+
+> ### 主从复制
+

@@ -247,3 +247,74 @@ redis-benchmark -h localhost -p 6379 -c 100 -n 100000
 
 > ### 主从复制
 
+* 配置server端
+
+* 主机(master)用来写
+* 从机(slave)只用来读
+* 从机可以从主机复制数据,但是主机无法从从机复制
+
+```bash
+127.0.0.1:6379> info replication
+# Replication
+role:master
+connected_slaves:2   	
+slave0:ip=::1,port=6380,state=online,offset=168,lag=0
+slave1:ip=::1,port=6381,state=online,offset=168,lag=1
+master_failover_state:no-failover
+master_replid:3ebfc7665afba954477dad59eb4616502c55fdf2
+master_replid2:0000000000000000000000000000000000000000
+master_repl_offset:168
+second_repl_offset:-1
+repl_backlog_active:1
+repl_backlog_size:1048576
+repl_backlog_first_byte_offset:1
+repl_backlog_histlen:168
+
+```
+
+* 修改配置文件的端口,log,dump.log
+* `redis-server 配置文件目录`启动server 
+
+* `slaveof localhost 6379`使当前的主机作为localhost:6379的从机
+* 使用命令配置主从是暂时的,在配置文件replication配置的是永久的
+* 主从配置之后,在主机中写入值,从机中也可以读取
+* 第一次主从连接后会来一次全量复制的sync请求,后面会执行增量sync请求
+* 一个从节点也可以作为一个主节点
+* 如果主机断开了,使用`slaveof noone`使自己变为主机,其他节点手动连接到该节点
+
+#### 哨兵模式(自动选举老大)
+
+![image-20220723213650244](/home/gohoy/.config/Typora/typora-user-images/image-20220723213650244.png)
+
+* 配置哨兵配置文件 sentinel.conf
+* `sentinel monitor 被监控服务名称  127.0.0.1  6379  1`最后的1代表开启投票选老大
+* 启动哨兵`redis-sentinel 配置文件路径`
+* 主机宕机之后,哨兵选取一个新的主机(投票算法),原来的主机恢复之后,只能作为新主机的从机
+
+> ### Redis 缓存穿透和雪崩
+
+#### 1.缓存穿透(多个请求无法命中)
+
+请求的数据 Redis 没有命中,向持久层数据库请求,发现也没有.特别多对持久层数据库的请求会增加数据库的压力,相当于出现了缓存穿透.
+
+#### -> 布隆过滤器
+
+#### -> 缓存空对象
+
+#### 2.缓存击穿(一个热点请求多次)
+
+一个热点key并发请求量特别多,当key失效的瞬间,大量请求直接访问持久性数据库
+
+#### -> 热点key不过期
+
+#### -> 加互斥锁
+
+#### 3.缓存雪崩
+
+缓存集中过期失效,Redis宕机,请求直接访问数据库
+
+#### -> Redis 高可用: 搭建集群
+
+#### -> 限流降级 : 控制读写数据库的线程数量
+
+#### -> 数据预热

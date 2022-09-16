@@ -4,7 +4,7 @@
 
 yaml文件对空格要求极为严格
 
-``` yaml
+```yaml
 server:
   port: 8080
 
@@ -32,7 +32,7 @@ pets: [cat,pig,dog]
 
 **在`application.yaml`中给实体类Person赋值,然后在实体类Person.java 中加入注解`@ConfigurationProperties(prefix ="person")`**
 
-``` yaml
+```yaml
 person:
   name: gohoy
   age: 18

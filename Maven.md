@@ -1,6 +1,6 @@
 ## Maven 构建bug记录
 
-## 1. 
+## 1.
 
 #### [Failure to transfer org.springframework.boot:spring-boot-starter-parent:pom:2.0.1.RELEASE from https://repo.maven.apache.org/maven2 was cached in the local repository, resolution will not be reattempt](https://www.cnblogs.com/newcaoguo/p/8825142.html)
 
